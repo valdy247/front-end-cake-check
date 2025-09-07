@@ -1,0 +1,8 @@
+{
+  "name": "cake-check-frontend",
+  "private": true,
+  "scripts": {
+    "start": "node dev.js",
+    "dev": "node dev.js"
+  }
+}

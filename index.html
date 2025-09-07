@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cake Check</title>
+  <link rel="stylesheet" href="/styles.css" />
+  <link rel="icon" href="data:," />
+  <meta name="color-scheme" content="light dark">
+  <meta name="description" content="Cake Check - Calculadora de costos y comunidad de repostería" />
+  <meta name="description" content="Candy Check - Calculadora de costos de repostería" />
+  <script defer src="/app.js"></script>
+  <style>
+    /* Tipografía segura sin dependencias */
+    @font-face { font-family: system-ui; src: local("Segoe UI"), local("Roboto"), local("Helvetica Neue"); }
+  </style>
+  
+  </head>
+<body>
+  <div id="lang-switch" class="lang-switch">
+    <button data-lang="es" id="btn-lang-es">ES</button>
+    <button data-lang="en" id="btn-lang-en">EN</button>
+  </div>
+  <!-- Splash / Logo -->
+  <section id="view-splash" class="view active center">
+    <div class="logo">
+      <span class="logo-candy">Cake</span>
+      <span class="logo-check">Check</span>
+    </div>
+    <div class="subtitle" id="i18n-splash-subtitle">Tu asistente de costos dulces</div>
+    <button id="btn-enter" class="primary">Entrar</button>
+  </section>
+
+  <!-- Auth -->
+  <section id="view-auth" class="view">
+    <div class="auth-card">
+      <h2>Accede a tu cuenta</h2>
+      <form id="form-login">
+        <label>Email<input type="email" name="email" required></label>
+        <label>Contraseña<input type="password" name="password" required></label>
+        <button class="primary" type="submit">Iniciar sesión</button>
+      </form>
+      <div class="divider">o</div>
+      <h3>Crea una cuenta</h3>
+      <form id="form-signup">
+        <label>Nombre<input type="text" name="name" placeholder="Opcional"></label>
+        <label>Email<input type="email" name="email" required></label>
+        <label>Contraseña<input type="password" name="password" required></label>
+        <button class="secondary" type="submit">Registrarme</button>
+      </form>
+      <p id="auth-msg" class="msg"></p>
+    </div>
+  </section>
+
+  <!-- Portal -->
+  <section id="view-portal" class="view">
+    <header class="topbar">
+      <button id="btn-menu" class="icon" aria-label="Menú">☰</button>
+      <div class="brand"><span class="logo-candy">Cake</span><span class="logo-check">Check</span></div>
+      <div id="user-name"></div>
+    </header>
+
+    <nav id="drawer" class="drawer">
+      <button class="drawer-close" aria-label="Cerrar">×</button>
+      <a href="#recipes" class="navlink">Recetas</a>
+      <a href="#calculator" class="navlink">Calculadora</a>
+      <a href="#add-product" class="navlink">Producto personalizado</a>
+      <a href="#comunidad" class="navlink" id="i18n-nav-community">Comunidad</a>
+      <a href="#logout" class="navlink">Cerrar sesión</a>
+    </nav>
+
+    <main class="content">
+      <section id="panel-recipes" class="panel active">
+      <h2 id="i18n-recipes-title">Recetas populares</h2>
+        <ul id="recipes-list" class="list"></ul>
+        <article id="recipe-detail" class="card hidden"></article>
+      </section>
+
+      
+
+      <section id="panel-calculator" class="panel">
+        <h2 id="i18n-calc-title">Calculadora de costos</h2>
+        <div class="search">
+          <input id="search-input" type="search" placeholder="Buscar ingrediente..." />
+          <button id="search-btn">Buscar</button>
+        </div>
+        <div id="autocomplete" class="autocomplete"></div>
+        <div id="search-results" class="results"></div>
+        <h3 id="i18n-selected-title">Ingredientes seleccionados</h3>
+        <div id="selected-list" class="selected"></div>
+        <div class="totals">
+          <div><span id="label-total-cost">Costo total:</span> <strong id="total-cost">0.00</strong></div>
+          <div><span id="label-final-price">Precio sugerido (x3):</span> <strong id="final-price">0.00</strong></div>
+        </div>
+      </section>
+
+      <section id="panel-add-product" class="panel">
+        <h2 id="i18n-addp-title">Agregar producto personalizado</h2>
+        <form id="form-add-product" class="card">
+          <label>Nombre<input name="name" required></label>
+          <label>Unidad 
+            <select name="unit">
+              <option value="kg">kg</option>
+              <option value="g">g</option>
+              <option value="l">l</option>
+              <option value="ml">ml</option>
+              <option value="unidad">unidad</option>
+              <option value="h">h</option>
+            </select>
+          </label>
+          <input type="hidden" name="id" />
+          <label>Precio por unidad<input name="pricePerUnit" type="number" step="any" min="0" placeholder="e.g. 0.0005" required></label>
+          <div style="display:flex; gap:8px; flex-wrap:wrap">
+            <button class="primary" type="submit" id="addp-submit">Guardar</button>
+            <button class="icon" type="button" id="addp-cancel" style="display:none">Cancelar edición</button>
+          </div>
+          <p class="hint" id="i18n-addp-hint">Ejemplos: kg = precio por kilo; g = precio por gramo; l = por litro; ml = por mililitro; unidad = por pieza.</p>
+          <p id="addp-msg" class="msg"></p>
+        </form>
+        <div class="card" style="margin-top:12px">
+          <h3 style="margin-top:0" id="i18n-custom-title">Mis productos personalizados</h3>
+          <div id="custom-list" class="results"></div>
+        </div>
+      </section>
+
+      <section id="panel-comunidad" class="panel">
+        <h2 id="i18n-community-title">Comunidad</h2>
+        <form id="form-post" class="card" style="margin-bottom:12px">
+          <label>Tipo de publicación
+            <select name="type">
+              <option value="photo">Foto</option>
+              <option value="question">Pregunta</option>
+              <option value="tip">Consejo</option>
+            </select>
+          </label>
+          <label>Texto
+            <textarea name="text" rows="3" style="resize:vertical; background:#0d1217; border:1px solid var(--border); color:var(--fg); padding:10px 12px; border-radius:8px"></textarea>
+          </label>
+          <label>Imagen (opcional)
+            <input type="file" name="image" accept="image/*" />
+          </label>
+          <div style="display:flex; gap:8px; flex-wrap:wrap">
+            <button class="primary" type="submit" id="post-submit">Publicar</button>
+            <span id="post-msg" class="msg"></span>
+          </div>
+        </form>
+        <div id="posts-list" class="list"></div>
+      </section>
+
+      <!-- Modal edición de producto personalizado -->
+      <div id="modal-edit" class="modal hidden">
+        <div class="modal-card">
+          <h3 style="margin-top:0">Editar producto</h3>
+          <form id="form-edit-product">
+            <input type="hidden" name="id" />
+            <label>Nombre<input name="name" required></label>
+            <label>Unidad
+              <select name="unit">
+                <option value="kg">kg</option>
+                <option value="g">g</option>
+                <option value="l">l</option>
+                <option value="ml">ml</option>
+                <option value="unidad">unidad</option>
+                <option value="h">h</option>
+              </select>
+            </label>
+            <label>Precio por unidad<input name="pricePerUnit" type="number" step="any" min="0" required></label>
+            <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:6px">
+              <button class="primary" type="submit">Guardar cambios</button>
+              <button class="icon" type="button" id="editp-cancel">Cancelar</button>
+            </div>
+            <p id="editp-msg" class="msg"></p>
+          </form>
+        </div>
+      </div>
+    </main>
+  </section>
+
+</body>
+</html>
