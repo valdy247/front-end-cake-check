@@ -1,3 +1,8 @@
+// Base URL de la API: localhost en dev, Render en producción (Netlify)
+const API_BASE = (location.hostname === 'localhost')
+  ? 'http://localhost:3000'
+  : 'https://cake-check.onrender.com';
+
 // Simple SPA state
 const S = {
   token: localStorage.getItem('cc_token') || null,
@@ -33,7 +38,7 @@ function showPanel(id) {
 }
 
 async function api(path, opts = {}) {
-  const res = await fetch(path, {
+  const res = await fetch(`${API_BASE}${path}`, {
     headers: {
       'Content-Type': 'application/json',
       ...(S.token ? { Authorization: 'Bearer ' + S.token } : {}),
@@ -560,7 +565,7 @@ document.getElementById('form-post')?.addEventListener('submit', async (e) => {
       msg.textContent = 'Publicado';
       f.reset();
       await loadPosts();
-      location.hash = '#comunity?post=' + encodeURIComponent(saved.id);
+      location.hash = '#comunidad?post=' + encodeURIComponent(saved.id);
       maybeScrollToPost(saved.id);
     } catch (err) {
       msg.textContent = err.message;
